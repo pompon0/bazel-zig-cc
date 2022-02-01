@@ -127,7 +127,7 @@ def _target_linux_musl(gocpu, zigcpu):
             "libc/include/{}-linux-musl".format(zigcpu),
             "libc/include/{}-linux-any".format(zigcpu),
         ] + (["libc/include/x86-linux-any"] if zigcpu == "x86_64" else []),
-        linkopts = ["-s", "-w"],
+        linkopts = [],
         copts = ["-D_LIBCPP_HAS_MUSL_LIBC", "-D_LIBCPP_HAS_THREAD_API_PTHREAD"],
         bazel_target_cpu = "k8",
         constraint_values = [

@@ -6,6 +6,7 @@ load(
     "flag_set",
     "tool",
     "tool_path",
+    "feature_set",
 )
 
 all_link_actions = [
@@ -73,7 +74,41 @@ def _zig_cc_toolchain_config_impl(ctx):
         ],
     )
 
+    dbg_feature = feature(
+      name = "dbg",
+      flag_sets = [
+        flag_set(
+          actions = all_compile_actions,
+          flag_groups = [flag_group(flags = ["-g","-O0"])],
+        ),
+        flag_set(
+          actions = all_link_actions,
+          flag_groups = [flag_group(flags = ["-g"])],
+        ),
+      ],
+    )
+    strip_dbg_flags = flag_set(
+      actions = all_link_actions,
+      flag_groups = [flag_group(flags = ["-s"])],
+    )
+    opt_feature = feature(
+      name = "opt",
+      flag_sets = [
+        strip_dbg_flags,
+        flag_set(
+          actions = all_compile_actions,
+          flag_groups = [flag_group(flags = ["-O3"])],
+        ),
+      ],
+    )
+    fastbuild_feature = feature(
+      name = "fastbuild",
+      flag_sets = [strip_dbg_flags],
+    )
     features = [
+        dbg_feature,
+        fastbuild_feature,
+        opt_feature,
         default_compiler_flags,
         default_linker_flags,
     ]
